@@ -26,9 +26,15 @@ PW_CHANNEL=chrome npm run test:e2e   # fluxos no navegador (usa o Chrome instala
 
 ## Deploy na Vercel
 
-1. Importe o repositório na Vercel (framework detectado: Next.js).
-2. Não é preciso configurar nada: build `next build`, saída estática.
-3. `vercel.json` já define cabeçalhos de segurança e `X-Robots-Tag: noindex`.
+Produção: **https://hyezza.vercel.app** (projeto `hyezza`, já vinculado nesta máquina em `.vercel/`).
+
+```bash
+npx vercel deploy --prod      # publica o estado atual
+E2E_BASE_URL=https://hyezza.vercel.app PW_CHANNEL=chrome npm run test:e2e   # confere o site publicado
+```
+
+`vercel.json` define CSP, `X-Robots-Tag: noindex` e demais cabeçalhos de segurança.
+Para deploy automático a cada push, conecte o repositório em Vercel → Project → Settings → Git.
 
 Em outro host (nginx, caddy…), publique a pasta `out/` e, se quiser, defina
 `NEXT_PUBLIC_SITE_URL=https://seu-dominio` antes do build para as imagens de compartilhamento.
