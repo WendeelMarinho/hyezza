@@ -1,0 +1,18 @@
+{
+  "$comment": "Mapeia cada arquivo bruto em imgs/ para um slug publico. rotate = graus no sentido horario para deixar a foto em pe. Rode `npm run images` depois de editar.",
+  "sourceDir": "imgs",
+  "outDir": "public/images/stylized",
+  "widths": [480, 828, 1200, 1600],
+  "photos": [
+    { "slug": "selfie-ceu-cosmico", "file": "ChatGPT Image 16 de set. de 2026, 15_02_49 (1).png", "rotate": 270 },
+    { "slug": "selfie-neon-futurista", "file": "ChatGPT Image 16 de set. de 2026, 15_02_49 (2).png", "rotate": 270 },
+    { "slug": "romance-cosmico-neon", "file": "ChatGPT Image 16 de set. de 2026, 15_02_49 (3).png", "rotate": 270 },
+    { "slug": "reflexos-futuristas", "file": "ChatGPT Image 16 de set. de 2026, 15_02_49 (4).png", "rotate": 0 },
+    { "slug": "neon-azul-roxo", "file": "ChatGPT Image 16 de set. de 2026, 15_02_50 (5).png", "rotate": 0 },
+    { "slug": "aconchego-entardecer", "file": "ChatGPT Image 16 de set. de 2026, 15_02_50 (6).png", "rotate": 90 },
+    { "slug": "devaneio-dourado", "file": "ChatGPT Image 16 de set. de 2026, 15_02_50 (7).png", "rotate": 90 },
+    { "slug": "refugio-luzes-noturnas", "file": "ChatGPT Image 16 de set. de 2026, 15_02_50 (8).png", "rotate": 90 },
+    { "slug": "luzes-violetas", "file": "ChatGPT Image 16 de set. de 2026, 15_02_50 (9).png", "rotate": 180 },
+    { "slug": "luzes-noturnas", "file": "ChatGPT Image 16 de set. de 2026, 15_02_51 (10).png", "rotate": 0 }
+  ]
+}
