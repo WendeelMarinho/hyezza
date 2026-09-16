@@ -8,6 +8,7 @@ import { isPhotoSlug } from '@/data/photos'
 import type { Memory } from '@/data/types'
 import { Photo } from '@/components/ui/Photo'
 import { ArrowIcon, cinematicEase } from '@/components/ui/primitives'
+import { useDialogFocus } from '@/hooks/useDialogFocus'
 
 type Props = {
   memory: Memory | null
@@ -18,22 +19,19 @@ type Props = {
 /** Capsula de memoria: abre sobre a constelacao com a foto se revelando. */
 export function MemoryCapsule({ memory, onClose, onStep }: Props) {
   const closeRef = useRef<HTMLButtonElement>(null)
+  const dialogRef = useRef<HTMLElement>(null)
   const open = memory !== null
+  useDialogFocus(dialogRef, open, closeRef)
 
   useEffect(() => {
     if (!open) return
-    const previous = document.activeElement as HTMLElement | null
-    closeRef.current?.focus({ preventScroll: true })
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onClose()
       if (event.key === 'ArrowRight') onStep(1)
       if (event.key === 'ArrowLeft') onStep(-1)
     }
     window.addEventListener('keydown', onKey)
-    return () => {
-      window.removeEventListener('keydown', onKey)
-      previous?.focus({ preventScroll: true })
-    }
+    return () => window.removeEventListener('keydown', onKey)
   }, [open, onClose, onStep])
 
   const photo = memory?.photo && isPhotoSlug(memory.photo) ? memory.photo : null
@@ -49,8 +47,9 @@ export function MemoryCapsule({ memory, onClose, onStep }: Props) {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.7 }}
         >
-          <button type="button" aria-label={constellation.closeLabel} onClick={onClose} className="absolute inset-0 bg-void/70 backdrop-blur-md" />
+          <button type="button" tabIndex={-1} aria-hidden onClick={onClose} className="absolute inset-0 bg-void/70 backdrop-blur-md" />
           <motion.article
+            ref={dialogRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby="capsule-title"

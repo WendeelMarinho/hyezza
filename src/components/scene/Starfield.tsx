@@ -12,6 +12,8 @@ const BASE_SPEED = 0.00005
 const POINTER_PARALLAX = 14
 const SCROLL_PARALLAX = 0.04
 const WARP_EASE = 0.05
+/** Variacao de area abaixo disso (ex.: barra do navegador no celular) nao recria as estrelas. */
+const RESEED_AREA_CHANGE = 0.25
 
 function createStars(count: number): Star[] {
   return Array.from({ length: count }, () => ({
@@ -39,6 +41,7 @@ export function Starfield() {
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     let stars: Star[] = []
+    let seededArea = 1
     let width = 0
     let height = 0
     let frame = 0
@@ -52,7 +55,11 @@ export function Starfield() {
       canvas.width = Math.round(width * dpr)
       canvas.height = Math.round(height * dpr)
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-      stars = createStars(Math.min(MAX_STARS, Math.round((width * height) / PIXELS_PER_STAR)))
+      const area = width * height
+      if (stars.length === 0 || Math.abs(area - seededArea) / seededArea > RESEED_AREA_CHANGE) {
+        seededArea = area
+        stars = createStars(Math.min(MAX_STARS, Math.round(area / PIXELS_PER_STAR)))
+      }
     }
 
     const draw = (time: number) => {

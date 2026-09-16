@@ -40,6 +40,10 @@ test.describe('ONE — experiência', () => {
     await dialog.getByRole('button', { name: 'Próxima' }).click()
     await expect(dialog.getByRole('heading', { name: 'A cidade acesa' })).toBeVisible()
 
+    // O foco fica preso dentro da cápsula.
+    for (let i = 0; i < 6; i++) await page.keyboard.press('Tab')
+    expect(await dialog.evaluate((el) => el.contains(document.activeElement))).toBe(true)
+
     await page.keyboard.press('Escape')
     await expect(dialog).toBeHidden()
   })

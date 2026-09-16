@@ -35,7 +35,11 @@ export function MemoryConstellation() {
     setSelected((current) => (current === null ? null : wrapIndex(current + direction, memories.length)))
   }, [])
 
-  const select = useCallback((memory: Memory) => setSelected(memories.indexOf(memory)), [])
+  // Escolher uma estrela manualmente encerra o modo historia.
+  const select = useCallback((memory: Memory) => {
+    setStory(null)
+    setSelected(memories.indexOf(memory))
+  }, [])
   const close = useCallback(() => setSelected(null), [])
 
   const startStory = () => {
@@ -71,7 +75,11 @@ export function MemoryConstellation() {
                 {constellation.storyLabel}
               </ArrowButton>
             ) : (
-              <button type="button" onClick={() => setStory(null)} className="glass rounded-full px-5 py-2.5 text-sm text-mist hover:text-frost">
+              <button
+                type="button"
+                onClick={() => setStory(null)}
+                className="glass rounded-full px-5 py-2.5 text-sm text-mist hover:text-frost"
+              >
                 {constellation.stopStoryLabel}
               </button>
             )}
@@ -121,7 +129,13 @@ export function MemoryConstellation() {
             <p className="caps pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 text-[0.55rem] text-mist/40 lg:hidden">
               {constellation.hint}
             </p>
-            <StoryCaption memory={storyMemory} index={story} onStep={stepStory} onOpen={() => story !== null && setSelected(story)} />
+            <StoryCaption
+              memory={storyMemory}
+              index={story}
+              paused={selected !== null}
+              onStep={stepStory}
+              onOpen={() => story !== null && setSelected(story)}
+            />
           </div>
         </Reveal>
 
@@ -142,9 +156,15 @@ export function MemoryConstellation() {
   )
 }
 
-type StoryCaptionProps = { memory: Memory | null; index: number | null; onStep: (d: 1 | -1) => void; onOpen: () => void }
+type StoryCaptionProps = {
+  memory: Memory | null
+  index: number | null
+  paused: boolean
+  onStep: (d: 1 | -1) => void
+  onOpen: () => void
+}
 
-function StoryCaption({ memory, index, onStep, onOpen }: StoryCaptionProps) {
+function StoryCaption({ memory, index, paused, onStep, onOpen }: StoryCaptionProps) {
   const photo = memory?.photo && isPhotoSlug(memory.photo) ? memory.photo : null
   return (
     <AnimatePresence mode="wait">
@@ -167,22 +187,35 @@ function StoryCaption({ memory, index, onStep, onOpen }: StoryCaptionProps) {
             <span className="mt-1 line-clamp-2 block font-display text-[0.9rem] leading-snug text-mist">{memory.caption}</span>
           </button>
           <div className="flex shrink-0 flex-col gap-1">
-            <button type="button" onClick={() => onStep(1)} aria-label={constellation.nextLabel} className="grid size-9 place-items-center rounded-full border border-white/10 text-mist hover:text-frost">
+            <button
+              type="button"
+              onClick={() => onStep(1)}
+              aria-label={constellation.nextLabel}
+              className="grid size-9 place-items-center rounded-full border border-white/10 text-mist hover:text-frost"
+            >
               <ArrowIcon className="size-4" />
             </button>
-            <button type="button" onClick={() => onStep(-1)} aria-label={constellation.previousLabel} className="grid size-9 place-items-center rounded-full border border-white/10 text-mist hover:text-frost">
+            <button
+              type="button"
+              onClick={() => onStep(-1)}
+              aria-label={constellation.previousLabel}
+              className="grid size-9 place-items-center rounded-full border border-white/10 text-mist hover:text-frost"
+            >
               <ArrowIcon className="size-4 rotate-180" />
             </button>
           </div>
-          <motion.span
-            key={`bar-${memory.id}`}
-            aria-hidden
-            className="absolute bottom-0 left-4 h-px origin-left bg-ice/70"
-            style={{ right: '1rem' }}
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: STORY_STEP_MS / 1000, ease: 'linear' }}
-          />
+          {/* A barra reinicia junto com o temporizador quando a pausa termina. */}
+          {!paused && (
+            <motion.span
+              key={`bar-${memory.id}`}
+              aria-hidden
+              className="absolute bottom-0 left-4 h-px origin-left bg-ice/70"
+              style={{ right: '1rem' }}
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: STORY_STEP_MS / 1000, ease: 'linear' }}
+            />
+          )}
         </motion.div>
       )}
     </AnimatePresence>

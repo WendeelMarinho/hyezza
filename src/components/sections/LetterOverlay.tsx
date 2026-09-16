@@ -6,6 +6,7 @@ import { letter, site } from '@/data/content'
 import { Photo } from '@/components/ui/Photo'
 import { cinematicEase } from '@/components/ui/primitives'
 import { useExperience } from '@/components/experience/ExperienceContext'
+import { useDialogFocus } from '@/hooks/useDialogFocus'
 
 const PORTAL_S = 1.6
 const FIRST_LINE_DELAY_S = 1.8
@@ -20,7 +21,9 @@ export function LetterOverlay({ origin, onClose }: Props) {
   const [showAll, setShowAll] = useState(false)
   const [showSymbol, setShowSymbol] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
+  const dialogRef = useRef<HTMLDivElement>(null)
   const open = origin !== null
+  useDialogFocus(dialogRef, open, scrollRef)
 
   const lines = [letter.greeting, ...letter.paragraphs]
   const signatureDelay = FIRST_LINE_DELAY_S + lines.length * LINE_GAP_S
@@ -59,6 +62,7 @@ export function LetterOverlay({ origin, onClose }: Props) {
       {origin && (
         <motion.div
           key="letter"
+          ref={dialogRef}
           role="dialog"
           aria-modal="true"
           aria-label="Carta"
@@ -82,7 +86,12 @@ export function LetterOverlay({ origin, onClose }: Props) {
             transition={{ duration: 1.4, delay: reduce ? 0 : PORTAL_S * 0.7 }}
           />
 
-          <div ref={scrollRef} className="relative h-full overflow-y-auto overscroll-contain" onClick={() => setShowAll(true)}>
+          <div
+            ref={scrollRef}
+            tabIndex={-1}
+            className="relative h-full overflow-y-auto overscroll-contain outline-none"
+            onClick={() => setShowAll(true)}
+          >
             <div className="section-pad mx-auto grid min-h-full max-w-6xl items-center 2xl:max-w-7xl gap-10 py-16 lg:grid-cols-[0.85fr_1fr] lg:gap-20 lg:py-20">
               <motion.div
                 initial={{ opacity: 0, scale: 1.08, filter: 'blur(24px)' }}
